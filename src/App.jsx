@@ -1,10 +1,10 @@
 import React from 'react'
-import Home_page from './components/Home_page'
+import Chatbot_page from './components/Chatbot_page'
 
 const App = () => {
   return (
     <div>
-      <Home_page />
+      <Chatbot_page />
     </div>
   )
 }
