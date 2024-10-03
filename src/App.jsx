@@ -1,10 +1,10 @@
 import React from 'react'
-import Login_page from './components/Login_page'
+import Home_page from './components/Home_page'
 
 const App = () => {
   return (
     <div>
-      <Login_page />
+      <Home_page />
     </div>
   )
 }
