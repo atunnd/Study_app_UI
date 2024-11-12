@@ -1,0 +1,26 @@
+.app-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(138, 204, 169, 0.25);
+    display: flex;
+    align-items: none;
+    justify-content: none;
+    flex-direction: column;
+}
+
+.table-title {
+    text-align: center;
+    font-weight: bold;   
+}
+
+.task-board {
+    background-color: white;
+    width: 40vh;
+    height: 80vh;
+    margin-left: 5vh;
+    margin-top: 6vh;
+}
+
