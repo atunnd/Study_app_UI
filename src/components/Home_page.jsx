@@ -4,8 +4,14 @@ import './Home_page.css';
 
 const Home_page = () => {
   const navigate = useNavigate();
-  const handleClick = (event) => {
+  const handleClickLogin = (event) => {
       navigate("/login_page");
+  }
+  const handleClickSignUp = (event) => {
+    navigate("/SignUp_page");
+  }
+  const handleClickAboutUs = (event) => {
+    navigate("/login_page");
   }
   return (
     
@@ -22,29 +28,17 @@ const Home_page = () => {
                 <i></i>
                 <i></i>
                 <i></i>
-                <i></i>
-                <i></i>
-                <i></i>
-                <i></i>
-                <i></i>
       </div>
       {/* Header Section */}
-      <header className="header">
-        <h1 className="header_title">Study with me</h1>
-      </header>
+      <header className="header">Study with me</header>
 
       {/* Main Content Section*/}
       <main className="button_container">
-        <button className="login_button" onClick={handleClick}>login</button>
-        <button className="sign_up_button" onClick={handleClick}>sign up</button>
-        <button className="about_us_button" onClick={handleClick}>about us</button>
+        <button className="login_button" onClick={handleClickLogin}>login</button>
+        <button className="sign_up_button" onClick={handleClickSignUp}>sign up</button>
+        <button className="about_us_button" onClick={handleClickAboutUs}>about us</button>
       </main>
 
-      
-      {/* Footer Section */}
-      <footer className="footer">
-        <p className="footer-text"></p>
-      </footer>
     </div>
   )
 }

@@ -12,22 +12,20 @@
 }
 
 .header {
-    font-size: 5vw; /* Scale font size based on viewport width */
-    padding-top: 0.5vh; /* Scale padding based on viewport height */
-    margin-top: -25vh;
+    font-size: 16vh; /* Scale font size based on viewport width */
+    padding-bottom: 2vh; /* Scale padding based on viewport height */
     text-align: center;
+    color: #8accac;
+    font-weight: bold;
 }
 
-.header_title {
-    color: #8accac;
-}
 
 .button_container {
     display: flex;
     flex-direction: row;
     justify-content: center;
     width: 80vw; /* Set a width based on viewport to adjust with screen size */
-    margin-top: -10vh; /* Adjust margin for centering */
+    margin-top: 2vh; /* Adjust margin for centering */
 }
 
 .login_button,
@@ -49,8 +47,8 @@
 /*Leave falling effect*/
 
 #leaves {
-    position: relative;
-    top: -230px;
+    position: absolute;
+    top: -250px;
     width: 100%;
     text-align: right;
 }
@@ -285,4 +283,3 @@
         opacity: 0;
     }
 }
-

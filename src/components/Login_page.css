@@ -47,7 +47,7 @@
     outline: none;
 }
 
-/* Submit button styling */
+/* Submit button */
 .login-button {
     width: 150px;
     height: 50px;
@@ -66,31 +66,24 @@
     background-color: #76b894;
 }
 
-/* Additional button for "Click Me" */
-.additional-button {
+/* Link to sign up and home */
+.link-container {
+    width: 400px;
+    margin-left: 100px;
     margin-top: 10px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    background-color: rgba(138, 204, 191, 0.21);
-    color: #8ACCA0;
-    font-weight: 600;
-    border: 2px solid #8ACCA0;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s;
+    margin-bottom: 0px;
+    font-weight: bold;
 }
 
-.additional-button:hover {
-    background-color: rgba(138, 204, 191, 0.5);
-}
-
+.signup-link,
 .home-link {
-    margin-top: 20px;
+    margin: 20px;
     font-size: 1rem;
     color: #8ACCA0;
     text-decoration: none;
 }
 
+.signup-link:hover,
 .home-link:hover {
     text-decoration: underline;
 }
