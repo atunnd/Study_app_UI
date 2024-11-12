@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import Home_page from './home_page';
+import { Link } from 'react-router-dom';
+import './Login_page.css';
 
 const Login_page = () => {
   const [username, setUsername] = useState('');
@@ -24,35 +24,37 @@ const Login_page = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '5%' }}>
-      <h1>Login Page</h1>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <label>
+    <div className="login-container">
+      <h1 className="login-title">Login Page</h1>
+      <form onSubmit={handleSubmit} className="login-form">
+        <label className="login-label">
           Username:
           <input
             type="text"
             value={username}
             onChange={handleUsernameChange}
-            style={{ margin: '10px', padding: '10px', fontSize: '1rem' }}
+            className="login-input"
           />
         </label>
-        <label>
-          Password:
+        <label className="login-label">
+          Password: 
           <input
+            className="login-input"
             type="password"
             value={password}
             onChange={handlePasswordChange}
-            style={{ margin: '10px', padding: '10px', fontSize: '1rem' }}
           />
         </label>
-        <button type="submit" style={{ padding: '10px 20px', fontSize: '1rem', cursor: 'pointer' }}>
+        <button type="submit" className="login-button">
           Login
         </button>
+        <Link to="" className="link-to-sign-up">
+          Create account
+        </Link>
       </form>
-      <button onClick={() => alert('React Synthetic Event Triggered!')} style={{ marginTop: '10px' }}>
-        Click Me
-      </button>
-      <Link to="/">Go to Home Page</Link>
+      <Link to="/" className="home-link">
+        Go to Home Page
+      </Link>
     </div>
   );
 };

@@ -1,0 +1,96 @@
+/* Container for the entire login page */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: rgba(138, 204, 169, 0.25);
+}
+
+/* Header title */
+.login-title {
+    font-size: 3rem;
+    color: #8accac;
+    margin-bottom: 20px;
+}
+
+/* Form container */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(138, 204, 191, 0.21);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-label {
+    width: 550px;
+    font-size: 25px;
+    margin: 10px;
+    text-align: left;
+    color: #8accac;
+    font-weight: bold;
+}
+
+/* Input fields styling */
+.login-input {
+    width: 300px;
+    height: 40px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 2px solid #8ACCA0;
+    border-radius: 10px;
+    margin-left: 20px;
+    outline: none;
+}
+
+/* Submit button styling */
+.login-button {
+    width: 150px;
+    height: 50px;
+    margin-top: 20px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+    background-color: #8ACCA0;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.login-button:hover {
+    background-color: #76b894;
+}
+
+/* Additional button for "Click Me" */
+.additional-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: rgba(138, 204, 191, 0.21);
+    color: #8ACCA0;
+    font-weight: 600;
+    border: 2px solid #8ACCA0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.additional-button:hover {
+    background-color: rgba(138, 204, 191, 0.5);
+}
+
+.home-link {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: #8ACCA0;
+    text-decoration: none;
+}
+
+.home-link:hover {
+    text-decoration: underline;
+}

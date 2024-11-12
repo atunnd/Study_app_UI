@@ -14,7 +14,7 @@
 .header {
     font-size: 5vw; /* Scale font size based on viewport width */
     padding-top: 0.5vh; /* Scale padding based on viewport height */
-    margin-top: -10vh;
+    margin-top: -25vh;
     text-align: center;
 }
 
