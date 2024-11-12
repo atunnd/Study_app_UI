@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Login_page.css';
+
 
 const Login_page = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -17,7 +19,11 @@ const Login_page = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (username && password) {
-      alert(`Username: ${username}\nPassword: ${password}`);
+      {/*Check for correct account*/}
+      if ((username == "atun") && (password == "123")) {
+        alert("Welcome back! ", username)
+        navigate("/Study_page")
+      }
     } else {
       alert('Please enter both username and password');
     }
@@ -27,8 +33,8 @@ const Login_page = () => {
     <div className="login-container">
       <h1 className="login-title">Login Page</h1>
       <form onSubmit={handleSubmit} className="login-form">
-        <label className="login-label">
-          Username:
+        {/* username field */}
+        <label className="login-label">Username:
           <input
             type="text"
             value={username}
@@ -36,8 +42,8 @@ const Login_page = () => {
             className="login-input"
           />
         </label>
-        <label className="login-label">
-          Password: 
+        {/* password field */}
+        <label className="login-label">Password: 
           <input
             className="login-input"
             type="password"
@@ -45,16 +51,20 @@ const Login_page = () => {
             onChange={handlePasswordChange}
           />
         </label>
+        {/*submit button*/}
         <button type="submit" className="login-button">
           Login
         </button>
-        <Link to="" className="link-to-sign-up">
-          Create account
-        </Link>
-      </form>
-      <Link to="/" className="home-link">
-        Go to Home Page
-      </Link>
+        {/*Link to home page and sign up page*/}
+        <label className="link-container">
+          <Link to="/SignUp_page" className="signup-link">
+            Create account
+          </Link>
+          <Link to="/" className="home-link">
+            Go to Home Page
+          </Link>
+        </label>       
+      </form>     
     </div>
   );
 };
