@@ -21,7 +21,6 @@ const Login_page = () => {
     if (username && password) {
       {/*Check for correct account*/}
       if ((username == "atun") && (password == "123")) {
-        alert("Welcome back! ", username)
         navigate("/Study_page")
       }
     } else {
