@@ -1,0 +1,196 @@
+.app-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(138, 204, 169, 0.25);
+    display: flex;
+    align-items: none;
+    justify-content: none;
+    flex-direction: column;
+}
+
+.table-title {
+    text-align: center;
+    font-weight: bold;   
+}
+
+.to-do-list-table{
+    position: absolute;
+    flex-direction: column;
+    display: flex;
+}
+
+.hide-to-do-task-btn{
+    position: absolute;
+    background-color: #8ACCA0;
+    width: 3vh;
+    height: 52vh;
+    margin-top: 4vh;
+    cursor: pointer;
+    border: 0;
+    border-radius: 0px 10px 10px 0px;
+    writing-mode: vertical-rl;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.to-do-task {
+    background-color: white;
+    width: 50vh;
+    margin-left: 5vh;
+    flex-direction: column;
+    margin-top: 4vh;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+}
+
+.each-task {
+    margin-top: 1vh;
+}
+
+.task-delete-btn {
+    width: 3vh;
+}
+
+.task-description {
+    margin-left: 1vh;
+}
+
+.check-box {
+    margin-left: 1vh;
+}
+
+.add-task-btn {
+    width: 10vh;
+    margin-top: 1vh;
+}
+
+.countdown-clock {
+    position: absolute; /* Position the clock in the center */
+    top: 50%;
+    left: 50%;
+    width: 35vh;
+    height: 50vh;
+    transform: translate(-50%, -50%); /* Center the clock */
+    font-size: 1.75rem; /* Font size for visibility */
+    font-weight: bold;
+    color: #fff; /* White text color */
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    flex-direction: column;
+    display: flex;
+}
+
+.clock-table-btns {
+    display: flex;
+    gap: 10px;
+    
+}
+
+.start-clock-btn,
+.stop-clock-btn,
+.continue-clock-btn,
+.restart-clock-btn {
+    font-weight: bold;
+}
+
+
+.log-out-btn {
+    position: absolute;  /* Position it relative to its nearest positioned ancestor */
+    top: 10px;           /* Space it a bit from the top */
+    right: 10px;         /* Space it a bit from the right */
+    width: 10vh;         /* Set the width to 10vh */
+    padding: 10px;       /* Add some padding to make the button more clickable */
+    font-size: 16px;     /* Optional: Adjust font size */
+    background-color: #8ACCA0; /* Optional: Set a background color */
+    color: white;        
+    border: none;        
+    border-radius: 5px;  
+    cursor: pointer;     
+    font-weight: bold;
+    
+  }
+  
+.log-out-btn:hover {
+    background-color: #8ACCA0; 
+  }
+
+.chatbot-container {
+    background-color: white;
+    width: 45vh;
+    height: 40vh;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    left: 5vh;
+    bottom: 1vh;
+    border-radius: 10px;
+}
+
+.hide-chatbot-btn{
+    position: absolute;
+    background-color: #8ACCA0;
+    width: 3vh;
+    height: 39vh;
+    margin-top: 57vh;
+    cursor: pointer;
+    border: 0;
+    border-radius: 0px 10px 10px 0px;
+    writing-mode: vertical-rl;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.chatbot-messages {
+    height: 400px;
+    overflow-y: scroll;
+    padding: 8px;
+}
+.message {
+    margin: 8px 0;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1.5;
+}
+.user-message {
+    background-color: #8ACCA0;
+    color: #fff;
+    text-align: right;
+}
+.ai-message {
+    background-color: #f0f0f0;
+    text-align: left;
+}
+.chatbot-input-form {
+    display: flex;
+    margin-top: 16px;
+}
+.chatbot-input-form input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+}
+.chatbot-input-form button {
+    padding: 8px 16px;
+    border: none;
+    background-color:  #8ACCA0;
+    color: #fff;
+    border-radius: 0 4px 4px 0;
+    font-size: 16px;
+    cursor: pointer;
+}
+.chatbot-input-form button:hover {
+    background-color: #8ACCA0;
+}
