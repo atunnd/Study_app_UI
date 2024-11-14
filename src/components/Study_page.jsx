@@ -169,7 +169,7 @@ const Study_page = () => {
   };
 
   // Gemini API key
-  const genAI = new GoogleGenerativeAI("AIzaSyBoRr8S8UEnBPKJt0NY0xPERoAaq3-OwHs");
+  const genAI = new GoogleGenerativeAI("Gemini-api");
   const chatWithGemini = async (userInput) => {
     try {
       // Retrieve the Gemini model
