@@ -1,27 +1,54 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login_page.css';
-
+import axios from 'axios';
 
 const Login_page = () => {
-  const [username, setUsername] = useState('');
+  const [usermail, setUsermail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
+  const handleUsermailChange = (event) => {
+    setUsermail(event.target.value);
   };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    if (username && password) {
-      {/*Check for correct account*/}
-      if ((username == "atun") && (password == "123")) {
-        navigate("/Study_page")
+ 
+    if (usermail && password) {
+        const emailString = String(usermail);
+        const passwordString = String(password);
+        const nameString = "user";
+      try {
+        const response = await axios.post('http://localhost:8000/log_in', {
+          name: nameString,
+          mail: emailString,
+          password: passwordString
+        });
+ 
+        if (response.status === 200) {
+          alert('Login successful!');
+          localStorage.setItem('user_id', response.data.user_id);
+          navigate('/Study_page'); // Redirect to the study page
+        }
+      } catch (error) {
+        console.error('Login failed:', error);
+        alert(error.response?.data?.detail || 'Invalid login credentials.');
+        const loginData = {
+          name: nameString,
+          mail: emailString,
+          password: passwordString
+        };
+        
+        // Log to the console
+        console.log(loginData);
+        
+        // Alert the object as a string
+        alert(JSON.stringify(loginData, null, 2));
       }
     } else {
       alert('Please enter both username and password');
@@ -33,12 +60,13 @@ const Login_page = () => {
       <h1 className="login-title">Login Page</h1>
       <form onSubmit={handleSubmit} className="login-form">
         {/* username field */}
-        <label className="login-label">Username:
+        <label className="login-label">Email:
           <input
-            type="text"
-            value={username}
-            onChange={handleUsernameChange}
             className="login-input"
+            type="email"
+            value={usermail}
+            onChange={handleUsermailChange}
+            placeholder='Enter your email'
           />
         </label>
         {/* password field */}
@@ -48,6 +76,7 @@ const Login_page = () => {
             type="password"
             value={password}
             onChange={handlePasswordChange}
+            placeholder='Enter your password'
           />
         </label>
         {/*submit button*/}
