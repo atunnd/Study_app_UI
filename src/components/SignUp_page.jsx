@@ -41,7 +41,7 @@ const SignUp_page = () => {
   
     try {
       // Make the POST request to FastAPI backend
-      const response = await axios.post('http://localhost:8000/create_user', {
+      const response = await axios.post('http://0.0.0.0:10000/create_user', {
         name: usernameString,
         mail: emailString,
         password: passwordString
