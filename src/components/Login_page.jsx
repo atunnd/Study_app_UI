@@ -4,7 +4,6 @@ import './Login_page.css';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import useToken from '../hooks/useToken';
-// import { useAuth } from "../hooks/AuthProvider";
 
 const Login_page = () => {
   const [usermail, setUsermail] = useState('');
@@ -42,11 +41,11 @@ const Login_page = () => {
           localStorage.setItem('user_name', response.data.data.user_name)
           localStorage.setItem('mail', response.data.data.mail)
           setToken(userToken);
-          navigate('/Study_page'); // Redirect to the study page
+          navigate('/Study_page');
         }
       } catch (error) {
         console.error('Login failed:', error);
-        alert(error.response?.data?.detail || 'Invalid login credentials.');
+        alert(error.response?.data?.detail || 'Invalid login!');
         const loginData = {
           name: nameString,
           mail: emailString,

@@ -17,7 +17,6 @@ const App = () => {
      <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home_page />} />
-          {/* <Route path="/login_page" Component={Login_page}/> */}
           <Route 
             path="/login_page" 
             element={token ? (<Navigate replace to="/Study_page" />) : (<Login_page setToken={setToken} />) } />
@@ -25,10 +24,6 @@ const App = () => {
           <Route 
             path="/Study_page" 
             Component={Study_page}/> 
-            {/* <Route 
-          path="/Study_page" 
-          element={token ? <Study_page /> : <Navigate replace to="/login_page" />} // Redirect to login if no token 
-        />*/}
         </Routes>
      </BrowserRouter>
   )

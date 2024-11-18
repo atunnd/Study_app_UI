@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './SignUp_page.css'; // Make sure you add a CSS file for styling
+import './SignUp_page.css'; 
 import axios from 'axios';
 
 const SignUp_page = () => {
@@ -8,7 +8,7 @@ const SignUp_page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const navigate = useNavigate(); // to navigate after successful sign-up
+  const navigate = useNavigate(); 
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
@@ -29,7 +29,6 @@ const SignUp_page = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
   
-    // Validate that passwords match
     if (password !== confirmPassword) {
       alert('Passwords do not match');
       return;
@@ -40,7 +39,6 @@ const SignUp_page = () => {
     const passwordString = String(password);
   
     try {
-      // Make the POST request to FastAPI backend
       const response = await axios.post('https://study-app-be-4.onrender.com/create_user', {
         name: usernameString,
         mail: emailString,

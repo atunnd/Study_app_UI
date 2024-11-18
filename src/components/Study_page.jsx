@@ -9,7 +9,6 @@ import useToken from '../hooks/useToken';
 import axios from 'axios';
 
 const Study_page = () => {
-  const navigate = useNavigate();
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [focusTime, setFocusTime] = useState(0); // in minutes
@@ -26,7 +25,6 @@ const Study_page = () => {
   // For To-Do List
   const [labels, setLabels] = useState([]);
   const [formHeight, setFormHeight] = useState(25);
-  //const [isVisible1, setIsVisible1] = useState(false); // for to-do-list table
   const [isVisible1, setIsVisible1] = useState(() => {
     // Retrieve initial state from localStorage or default to false
     const savedVisibility = localStorage.getItem('isVisible1');
@@ -35,7 +33,7 @@ const Study_page = () => {
   // For Chatbot
   const [isVisible2, setIsVisible2] = useState(false); // for chat-bot
 
-  // Helper to convert minutes to seconds
+  // Convert minutes to seconds
   const toSeconds = (minutes) => minutes * 60;
 
   // Start button click handler
@@ -172,7 +170,7 @@ const Study_page = () => {
 
           if (response.status === 200) {
             const fetchedLabels = response.data.data;
-            console.log(fetchedLabels)
+            // console.log(fetchedLabels)
             setLabels(fetchedLabels);
             const newFormHeight = 25 +  fetchedLabels.length * 3;
             setFormHeight(newFormHeight);
@@ -184,7 +182,7 @@ const Study_page = () => {
         }
       } catch (error) {
         console.error('Error fetching tasks:', error);
-        alert('Failed to fetch tasks. Please try again.');
+        // alert('Failed to fetch tasks. Please try again.');
       }
     };
 
@@ -241,7 +239,7 @@ const Study_page = () => {
         }
       } catch (error) {
         console.error('Error adding label:', error);
-        alert('Failed to add the label. Please try again.');
+        // alert('Failed to add the label. Please try again.');
       }
     }
   };
@@ -255,7 +253,7 @@ const Study_page = () => {
       
       // Get the updated label with the corresponding label_id
       const updatedLabel = updatedLabels[index];
-      console.log("Request data: ", updatedLabel);
+      // console.log("Request data: ", updatedLabel);
       
 
       const temp = {index: updatedLabel.index.toString(),
@@ -282,44 +280,38 @@ const Study_page = () => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
       });
-      console.log(response);
-      // Check if the update was successful
+      // console.log(response);
       if (response.status === 200) {
-        // After successful update, update the state with the new label data
         setLabels(updatedLabels);
-  
-        // Update localStorage with the updated labels array
         localStorage.setItem('labels', JSON.stringify(updatedLabels));
       } else {
         console.error('Failed to update label');
-        alert('Failed to update label. Please try again.');
+        // alert('Failed to update label. Please try again.');
       }
     } catch (error) {
       console.error('Error updating label:', error);
-      alert('Failed to update the label. Please try again.');
+      // alert('Failed to update the label. Please try again.');
     }
   };
 
   const handleDeleteTask = async (index) => {
     try {
-      const token = localStorage.getItem('token'); // Retrieve token from localStorage
-      console.log("token: ", token);
-      console.log("taskid: ", labels[index])
-      const taskId = labels[index].id; // Assuming `label_id` is the task ID
-      console.log("Delete id: ", taskId);
-      // Delete the task from the backend
+      const token = localStorage.getItem('token'); 
+      // console.log("token: ", token);
+      // console.log("taskid: ", labels[index])
+      const taskId = labels[index].id; 
+      // console.log("Delete id: ", taskId);
       const response = await axiosInstance.delete(`/delete_task_${taskId}`, taskId.toString(), {
         headers: {
           'Accept': 'application/json',
-          'Authorization': `Bearer ${token}`, // Bearer token for authentication
+          'Authorization': `Bearer ${token}`, 
         },
       });
   
       if (response.status === 200) {
-        // If deletion is successful, update the labels array
-        const updatedLabels = labels.filter((label, i) => i !== index); // Remove task at the given index
-        setLabels(updatedLabels); // Update state
-        localStorage.setItem('labels', JSON.stringify(updatedLabels)); // Save updated labels to localStorage
+        const updatedLabels = labels.filter((label, i) => i !== index); 
+        setLabels(updatedLabels); 
+        localStorage.setItem('labels', JSON.stringify(updatedLabels)); 
   
         // Update the form height
         const newFormHeight = formHeight - 3;
@@ -330,7 +322,7 @@ const Study_page = () => {
       }
     } catch (error) {
       console.error('Error deleting label:', error);
-      alert('Failed to delete the label. Please try again.');
+      // alert('Failed to delete the label. Please try again.');
     }
   };
 
@@ -384,25 +376,23 @@ const Study_page = () => {
   const { setToken } = useToken();
   // Log out handler
   const logOut = () => {
-    alert("Goodbye");
     setToken("");
     localStorage.removeItem('token');
     localStorage.clear();
     window.location.href = '/';
   };
 
-  const [clientId] = useState(Date.now()); // Unique client ID
-  const [chatmessages, setChatMessages] = useState([]); // Store messages
-  const [isBroadcast, setBroadCast] = useState([]);
-  const [inputValue, setInputValue] = useState(''); // Input field value
-  const ws = useRef(null); // WebSocket reference
+  const [clientId] = useState(Date.now()); 
+  const [chatmessages, setChatMessages] = useState([]); 
+  const [inputValue, setInputValue] = useState(''); 
+  const ws = useRef(null); 
 
   function isValidJSON(str) {
     try {
-          JSON.parse(str); // Try to parse the string
-          return true; // If parsing is successful, return true
+          JSON.parse(str); 
+          return true; 
     } catch (e) {
-          return false; // If an error occurs, it's not valid JSON
+          return false; 
     }
   }
   const chatmessagesEndRef = useRef(null);
@@ -411,20 +401,19 @@ const Study_page = () => {
  }, [chatmessages]);
   
 
-    // Initialize WebSocket connection
   useEffect(() => {
-      ws.current = new WebSocket(`wss://study-app-be-4.onrender.com/ws/${localStorage.getItem('user_id')}`); // Use ws:// instead of http:// for WebSocket
+      ws.current = new WebSocket(`wss://study-app-be-4.onrender.com/ws/${localStorage.getItem('user_id')}`); 
   
       ws.current.onmessage = async (event) => {
-          console.log('Received message:', event.data);
+          // console.log('Received message:', event.data);
   
-          let processedMessage = event.data; // Default to raw data from the WebSocket
+          let processedMessage = event.data; 
           let isBroadcast = false;
           // Check if the message is JSON
           if(isValidJSON(processedMessage))
           {   const message = JSON.parse(event.data); // Parse message as JSON
               const userId = message.id; // Extract user ID
-              const response = await axios.get(`https://study-app-be-4.onrender.com/get_user_name_${userId}`); // Get user name
+              const response = await axios.get(`https://study-app-be-4.onrender.com/get_user_name_${userId}`);
               const userName = response.data.data;
   
               // Format the message
@@ -436,8 +425,6 @@ const Study_page = () => {
           } 
 
           const new_processedMessage = {text: processedMessage, user: isBroadcast}
-  
-          // Add the processed message to the chat
           setChatMessages((prevMessages) => [...prevMessages, new_processedMessage]);
       };
   
