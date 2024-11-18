@@ -30,7 +30,7 @@ const Login_page = () => {
         const passwordString = String(password);
         const nameString = "user";
       try {
-        const response = await axios.post('http://0.0.0.0:10000/log_in', {
+        const response = await axios.post('https://study-app-be-4.onrender.com/log_in', {
           name: nameString,
           mail: emailString,
           password: passwordString
