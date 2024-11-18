@@ -413,7 +413,7 @@ const Study_page = () => {
 
     // Initialize WebSocket connection
   useEffect(() => {
-      ws.current = new WebSocket(`ws://study-app-be-4.onrender.com/ws/${localStorage.getItem('user_id')}`); // Use ws:// instead of http:// for WebSocket
+      ws.current = new WebSocket(`wss://study-app-be-4.onrender.com/ws/${localStorage.getItem('user_id')}`); // Use ws:// instead of http:// for WebSocket
   
       ws.current.onmessage = async (event) => {
           console.log('Received message:', event.data);
