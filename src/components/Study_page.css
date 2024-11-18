@@ -47,6 +47,8 @@
     display: flex;
     align-items: center;
     border-radius: 10px;
+    z-index: 1000;  
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 }
 
 .each-task {
@@ -71,21 +73,44 @@
 }
 
 .countdown-clock {
-    position: absolute; /* Position the clock in the center */
-    top: 50%;
+    position: absolute; 
+    top: 30%;
     left: 50%;
     width: 35vh;
-    height: 50vh;
-    transform: translate(-50%, -50%); /* Center the clock */
-    font-size: 1.75rem; /* Font size for visibility */
+    height: 40vh;
+    transform: translate(-50%, -50%); 
+    font-size: 1.75rem; 
     font-weight: bold;
-    color: #fff; /* White text color */
-    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    color: #fff; 
+    background-color: rgba(0, 0, 0, 0.7);
     padding: 10px 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     flex-direction: column;
     display: flex;
+}
+
+.focus-time-label {
+    font-size: 25px;
+}
+
+.countdown-input-1 {
+    position: absolute;
+    top: 2vh;
+    right: 2vh;
+}
+
+.countdown-input-2 {
+    position: absolute;
+    top: 6vh;
+    right: 2vh;
+}
+
+
+.countdown-input-3 {
+    position: absolute;
+    top: 10vh;
+    right: 2vh;
 }
 
 .clock-table-btns {
@@ -103,19 +128,19 @@
 
 
 .log-out-btn {
-    position: absolute;  /* Position it relative to its nearest positioned ancestor */
-    top: 10px;           /* Space it a bit from the top */
-    right: 10px;         /* Space it a bit from the right */
-    width: 10vh;         /* Set the width to 10vh */
-    padding: 10px;       /* Add some padding to make the button more clickable */
-    font-size: 16px;     /* Optional: Adjust font size */
-    background-color: #8ACCA0; /* Optional: Set a background color */
+    position: absolute;  
+    top: 4vh;           
+    right: 10px;        
+    width: 10vh;         
+    padding: 10px;       
+    font-size: 16px;    
+    background-color: #8ACCA0; 
     color: white;        
     border: none;        
     border-radius: 5px;  
     cursor: pointer;     
     font-weight: bold;
-    
+    transform: translate(-50%, -50%); 
   }
   
 .log-out-btn:hover {
@@ -125,13 +150,15 @@
 .chatbot-container {
     background-color: white;
     width: 45vh;
-    height: 40vh;
+    height: 34vh;
     position: absolute;
     display: flex;
     flex-direction: column;
     left: 5vh;
-    bottom: 1vh;
+    bottom: 4vh;
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    padding: 20px;
 }
 
 .hide-chatbot-btn{
@@ -151,6 +178,8 @@
 }
 
 .chatbot-messages {
+    margin-top: 18px;
+    
     height: 400px;
     overflow-y: scroll;
     padding: 8px;
@@ -173,7 +202,7 @@
 }
 .chatbot-input-form {
     display: flex;
-    margin-top: 16px;
+    margin-top: 5px;
 }
 .chatbot-input-form input {
     flex: 1;
@@ -193,4 +222,99 @@
 }
 .chatbot-input-form button:hover {
     background-color: #8ACCA0;
+}
+
+.chat-room-container {
+    position: absolute; 
+    bottom: 4vh;   
+    right: 7vh;     
+    width: 35vh;  
+    height: 55vh;
+    border-radius: 10px; 
+    padding: 20px;  
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+}
+
+.chat-room-form h3 {
+    margin-top: 0vh;
+    background-color: white;
+    text-align: center;
+    color: black;
+}
+
+.chat-room-form {
+    height: 42vh;
+    font-family: Arial, sans-serif;
+    overflow-y: scroll;
+}
+
+
+.chat-room-input {
+    /* position: absolute;
+    bottom: 2vh;
+    background-color: white;
+    display: flex; */
+    display: flex;
+    margin-top: 5px;
+}
+
+.form-control{
+    /* margin-right: 10px; 
+    width: 25vh; */
+    flex: 1;
+    width: 10vh;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    font-size: 16px;
+}
+
+.chat-room-btn {
+    
+    border: 1px solid #ccc;
+    border-radius: 0 4px 4px 0;
+    font-size: 16px;
+}
+
+.broadcast-msg {
+    text-align: left;
+    background-color: lightgray; 
+    padding: 10px;
+    border-radius: 5px;
+    border: blue;
+    margin: 5px 0;
+    color: black;
+}
+
+
+.my-msg {
+    text-align: right;
+    background-color: lightgray;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+.form-control {
+    width: 25vh;
+    height: 5vh;
+}
+
+.hide-chat-room-btn{
+    position: absolute;
+    right: 0;
+    background-color: #8ACCA0;
+    width: 3vh;
+    height: 86vh;
+    margin-top: 10vh;
+    cursor: pointer;
+    border: 0;
+    border-radius: 10px 0px 0px 10px;
+    writing-mode: vertical-rl;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
 }

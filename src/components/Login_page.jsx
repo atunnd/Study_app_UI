@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useContext, createContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login_page.css';
 import axios from 'axios';
+import Cookies from 'js-cookie';
+import useToken from '../hooks/useToken';
+// import { useAuth } from "../hooks/AuthProvider";
 
 const Login_page = () => {
   const [usermail, setUsermail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+
+  const { setToken } = useToken();
+
 
   const handleUsermailChange = (event) => {
     setUsermail(event.target.value);
@@ -31,8 +37,11 @@ const Login_page = () => {
         });
  
         if (response.status === 200) {
-          alert('Login successful!');
-          localStorage.setItem('user_id', response.data.user_id);
+          const userToken = { token: response.data.data.token };
+          localStorage.setItem('user_id', response.data.data.user_id)
+          localStorage.setItem('user_name', response.data.data.user_name)
+          localStorage.setItem('mail', response.data.data.mail)
+          setToken(userToken);
           navigate('/Study_page'); // Redirect to the study page
         }
       } catch (error) {
@@ -43,12 +52,6 @@ const Login_page = () => {
           mail: emailString,
           password: passwordString
         };
-        
-        // Log to the console
-        console.log(loginData);
-        
-        // Alert the object as a string
-        alert(JSON.stringify(loginData, null, 2));
       }
     } else {
       alert('Please enter both username and password');
