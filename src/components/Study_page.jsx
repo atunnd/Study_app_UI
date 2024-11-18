@@ -140,7 +140,7 @@ const Study_page = () => {
 
 // Set up an Axios instance with default headers
   const axiosInstance = axios.create({
-    baseURL: 'http://localhost:8000', // Adjust the base URL as per your API setup
+    baseURL: 'http://0.0.0.0:10000', // Adjust the base URL as per your API setup
   });
 
   // Add an interceptor to include the token in every request
@@ -413,7 +413,7 @@ const Study_page = () => {
 
     // Initialize WebSocket connection
   useEffect(() => {
-      ws.current = new WebSocket(`ws://localhost:8000/ws/${localStorage.getItem('user_id')}`); // Use ws:// instead of http:// for WebSocket
+      ws.current = new WebSocket(`ws://0.0.0.0:10000/ws/${localStorage.getItem('user_id')}`); // Use ws:// instead of http:// for WebSocket
   
       ws.current.onmessage = async (event) => {
           console.log('Received message:', event.data);
@@ -424,7 +424,7 @@ const Study_page = () => {
           if(isValidJSON(processedMessage))
           {   const message = JSON.parse(event.data); // Parse message as JSON
               const userId = message.id; // Extract user ID
-              const response = await axios.get(`http://localhost:8000/get_user_name_${userId}`); // Get user name
+              const response = await axios.get(`http://0.0.0.0:10000/get_user_name_${userId}`); // Get user name
               const userName = response.data.data;
   
               // Format the message
