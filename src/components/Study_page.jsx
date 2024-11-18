@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Study_page.css';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import useSound from 'use-sound';
 import breakEndSound from '../audios/mixkit-cinematic-church-bell-hit-619.mp3';
 import focusEndSound from '../audios/mixkit-happy-bells-notification-937.mp3';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import useToken from '../hooks/useToken';
+import axios from 'axios';
+
 const Study_page = () => {
   const navigate = useNavigate();
   const [input, setInput] = useState('');
@@ -136,68 +138,200 @@ const Study_page = () => {
     }
   }, []);
 
-  const addLabel = (e) => {
+// Set up an Axios instance with default headers
+  const axiosInstance = axios.create({
+    baseURL: 'http://localhost:8000', // Adjust the base URL as per your API setup
+  });
+
+  // Add an interceptor to include the token in every request
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      const tokenString = localStorage.getItem('token'); // Retrieve token from localStorage
+      const token = tokenString ? JSON.parse(tokenString) : null;
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`; // Add Authorization header
+      }
+      return config;
+    },
+    (error) => Promise.reject(error)
+  );
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const tokenString = localStorage.getItem('token');
+        const token = tokenString ? JSON.parse(tokenString) : null;
+        const userid = localStorage.getItem('user_id')
+        if (token) {
+          const response = await axiosInstance.get(`/tasks/${userid}`, userid, {
+            headers: {
+              'Accept': 'application/json', 
+              'Authorization': `Bearer ${token}`,
+            },
+          });
+
+          if (response.status === 200) {
+            const fetchedLabels = response.data.data;
+            console.log(fetchedLabels)
+            setLabels(fetchedLabels);
+            const newFormHeight = 25 +  fetchedLabels.length * 3;
+            setFormHeight(newFormHeight);
+
+            // Save to localStorage
+            localStorage.setItem('labels', JSON.stringify(fetchedLabels));
+            localStorage.setItem('formHeight', JSON.stringify(newFormHeight))
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+        alert('Failed to fetch tasks. Please try again.');
+      }
+    };
+
+    fetchTasks();
+  }, []);
+
+
+  const addLabel = async (e) => {
     e.preventDefault();
-    if (formHeight >= 50) {
+    if (labels.length >= 8) {
       alert("No more task!");
     } else {
-      const newLabel = { description: '', time: '', completed: false };
-      const updatedLabels = [...labels, newLabel];
-
-      setLabels(updatedLabels);
-      localStorage.setItem('labels', JSON.stringify(updatedLabels)); // Save updated labels to localStorage
-
-      // setFormHeight(formHeight + 3);
-      const newFormHeight = formHeight + 3;
-      setFormHeight(newFormHeight);
-      localStorage.setItem('formHeight', JSON.stringify(newFormHeight));
+      const newIndex = labels.length;
+      try {
+        const tokenString = localStorage.getItem('token'); // Retrieve token from localStorage
+        const token = tokenString ? JSON.parse(tokenString) : null;
+        const response = await axiosInstance.post('/create_task', 
+          { 
+            index: newIndex.toString(),
+            description: '', 
+            remind_noti: false,
+            checked: false,
+            user_id: localStorage.getItem('user_id').toString() 
+          },
+          {
+            headers: 
+            {
+              'Accept': 'application/json', 
+              'Authorization': `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          const new_label = {
+            id: response.data.data,  
+            index: newIndex.toString(),
+            description: '', 
+            remind_noti: false,
+            checked: false,
+            user_id: localStorage.getItem('user_id').toString() 
+          };
+      
+          // Update the labels state with the new label
+          const updatedLabels = [...labels, new_label]; // Corrected variable name to 'labels'
+      
+          setLabels(updatedLabels); // Update state with the new label
+      
+          const newFormHeight = formHeight + 3;
+          setFormHeight(newFormHeight); // Update form height
+      
+          // Save the updated labels and form height to localStorage
+          localStorage.setItem('labels', JSON.stringify(updatedLabels));
+          localStorage.setItem('formHeight', JSON.stringify(newFormHeight));
+        }
+      } catch (error) {
+        console.error('Error adding label:', error);
+        alert('Failed to add the label. Please try again.');
+      }
     }
   };
 
-  const handleLabelChange = (index, field, value) => {
-    const updatedLabels = labels.map((label, i) =>
-      i === index ? { ...label, [field]: value } : label
-    );
-    setLabels(updatedLabels);
-    localStorage.setItem('labels', JSON.stringify(updatedLabels)); // Save changes to localStorage
-  };
-
-  // Log out handler
-  const logOut = () => {
-    alert("Goodbye");
-    navigate('/');
-  };
-
-  // Gemini API key
-  const genAI = new GoogleGenerativeAI("Gemini-api");
-  const chatWithGemini = async (userInput) => {
+  const handleLabelChange = async (index, field, value) => {
     try {
-      // Retrieve the Gemini model
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      // Create a copy of the labels array and update the label at the specified index
+      const updatedLabels = labels.map((label, i) =>
+        i === index ? { ...label, [field]: value } : label
+      );
+      
+      // Get the updated label with the corresponding label_id
+      const updatedLabel = updatedLabels[index];
+      console.log("Request data: ", updatedLabel);
+      
 
-      // Generate content with the user input as the prompt
-      const response = await model.generateContent(userInput);
-
-      // Return the generated text
-      return response.response.text().trim();
+      const temp = {index: updatedLabel.index.toString(),
+        description: updatedLabel.description.toString(), 
+        remind_noti: updatedLabel.remind_noti,
+        checked: updatedLabel.checked,
+        user_id: updatedLabel.user_id.toString()}
+      
+      
+      // Make an API call to update the label
+      const response = await axiosInstance.put(`/update_task/${updatedLabel.id}`, 
+        {
+          id: updatedLabel.id.toString(),
+          index: updatedLabel.index.toString(),
+          description: updatedLabel.description.toString(), 
+          remind_noti: Boolean(updatedLabel.remind_noti),
+          checked: Boolean(updatedLabel.checked),
+          user_id: updatedLabel.user_id.toString()
+        }, 
+        {
+        headers: 
+          {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+      });
+      console.log(response);
+      // Check if the update was successful
+      if (response.status === 200) {
+        // After successful update, update the state with the new label data
+        setLabels(updatedLabels);
+  
+        // Update localStorage with the updated labels array
+        localStorage.setItem('labels', JSON.stringify(updatedLabels));
+      } else {
+        console.error('Failed to update label');
+        alert('Failed to update label. Please try again.');
+      }
     } catch (error) {
-      console.error("Error communicating with the Gemini API:", error.message);
-      return '';
+      console.error('Error updating label:', error);
+      alert('Failed to update the label. Please try again.');
     }
   };
 
-  // Chatbot submit handler
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-    const userMessage = { text: input, user: true };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
-    const aiMessage = { text: '...', user: false };
-    setMessages((prevMessages) => [...prevMessages, aiMessage]);
-    const response = await chatWithGemini(input);
-    const newAiMessage = { text: response, user: false };
-    setMessages((prevMessages) => [...prevMessages.slice(0, -1), newAiMessage]);
-    setInput('');
+  const handleDeleteTask = async (index) => {
+    try {
+      const token = localStorage.getItem('token'); // Retrieve token from localStorage
+      console.log("token: ", token);
+      console.log("taskid: ", labels[index])
+      const taskId = labels[index].id; // Assuming `label_id` is the task ID
+      console.log("Delete id: ", taskId);
+      // Delete the task from the backend
+      const response = await axiosInstance.delete(`/delete_task_${taskId}`, taskId.toString(), {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`, // Bearer token for authentication
+        },
+      });
+  
+      if (response.status === 200) {
+        // If deletion is successful, update the labels array
+        const updatedLabels = labels.filter((label, i) => i !== index); // Remove task at the given index
+        setLabels(updatedLabels); // Update state
+        localStorage.setItem('labels', JSON.stringify(updatedLabels)); // Save updated labels to localStorage
+  
+        // Update the form height
+        const newFormHeight = formHeight - 3;
+        setFormHeight(newFormHeight);
+        localStorage.setItem('formHeight', JSON.stringify(newFormHeight));
+      } else {
+        console.error("Error deleting task:", response.data);
+      }
+    } catch (error) {
+      console.error('Error deleting label:', error);
+      alert('Failed to delete the label. Please try again.');
+    }
   };
 
   useEffect(() => {
@@ -205,25 +339,130 @@ const Study_page = () => {
     localStorage.setItem('isVisible1', JSON.stringify(isVisible1));
   }, [isVisible1]);
 
-  const handleDeleteTask = (index) => {
-    const updatedLabels = labels.filter((label, i) => i !== index); // Remove task at the given index
-    setLabels(updatedLabels); // Update state
-    localStorage.setItem('labels', JSON.stringify(updatedLabels)); // Save updated labels to localStorage
+   // Gemini API key
+   const gemini_key = import.meta.env.VITE_GEMINI_API_KEY
+   const genAI = new GoogleGenerativeAI(gemini_key);
+   console.log(genAI);
+   const chatWithGemini = async (userInput) => {
+     try {
+       // Retrieve the Gemini model
+       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+ 
+       // Generate content with the user input as the prompt
+       const response = await model.generateContent(userInput);
+ 
+       // Return the generated text
+       return response.response.text().trim();
+     } catch (error) {
+       console.error("Error communicating with the Gemini API:", error.message);
+       return '';
+     }
+   };
 
-    const newFormHeight = formHeight - 3;
-    setFormHeight(newFormHeight);
-    localStorage.setItem('formHeight', JSON.stringify(newFormHeight));
+   const messagesEndRef = useRef(null);
+   useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+
+ 
+   // Chatbot submit handler
+   const handleSubmit = async (e) => {
+     e.preventDefault();
+     if (!input.trim()) return;
+     const userMessage = { text: input, user: true };
+     setMessages((prevMessages) => [...prevMessages, userMessage]);
+     const aiMessage = { text: '...', user: false };
+     setMessages((prevMessages) => [...prevMessages, aiMessage]);
+     const response = await chatWithGemini(input);
+     const newAiMessage = { text: response, user: false };
+     setMessages((prevMessages) => [...prevMessages.slice(0, -1), newAiMessage]);
+     setInput('');
+   };
+
+   
+  const { setToken } = useToken();
+  // Log out handler
+  const logOut = () => {
+    alert("Goodbye");
+    setToken("");
+    localStorage.removeItem('token');
+    localStorage.clear();
+    window.location.href = '/';
   };
+
+  const [clientId] = useState(Date.now()); // Unique client ID
+  const [chatmessages, setChatMessages] = useState([]); // Store messages
+  const [isBroadcast, setBroadCast] = useState([]);
+  const [inputValue, setInputValue] = useState(''); // Input field value
+  const ws = useRef(null); // WebSocket reference
+
+  function isValidJSON(str) {
+    try {
+          JSON.parse(str); // Try to parse the string
+          return true; // If parsing is successful, return true
+    } catch (e) {
+          return false; // If an error occurs, it's not valid JSON
+    }
+  }
+  const chatmessagesEndRef = useRef(null);
+  useEffect(() => {
+   chatmessagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+ }, [chatmessages]);
   
 
-  const clearLocalStorage = () => {
-    localStorage.clear(); // Or use localStorage.removeItem('key') for specific items
-    alert('Local storage cleared!');
-  };
+    // Initialize WebSocket connection
+  useEffect(() => {
+      ws.current = new WebSocket(`ws://localhost:8000/ws/${localStorage.getItem('user_id')}`); // Use ws:// instead of http:// for WebSocket
+  
+      ws.current.onmessage = async (event) => {
+          console.log('Received message:', event.data);
+  
+          let processedMessage = event.data; // Default to raw data from the WebSocket
+          let isBroadcast = false;
+          // Check if the message is JSON
+          if(isValidJSON(processedMessage))
+          {   const message = JSON.parse(event.data); // Parse message as JSON
+              const userId = message.id; // Extract user ID
+              const response = await axios.get(`http://localhost:8000/get_user_name_${userId}`); // Get user name
+              const userName = response.data.data;
+  
+              // Format the message
+              if (message.data == "has left the chat")
+                processedMessage = `${userName} ${message.data}`;
+              else
+                processedMessage = `${userName}: ${message.data}`;
+              isBroadcast = true;
+          } 
+
+          const new_processedMessage = {text: processedMessage, user: isBroadcast}
+  
+          // Add the processed message to the chat
+          setChatMessages((prevMessages) => [...prevMessages, new_processedMessage]);
+      };
+  
+      // Cleanup WebSocket on component unmount
+      return () => {
+          if (ws.current) ws.current.close();
+      };
+  }, [clientId]);
+
+    // Handle message send
+    const sendChatMessage = (event) => {
+        event.preventDefault();
+        if (ws.current && inputValue.trim()) {
+            ws.current.send(inputValue.trim());
+            setInputValue(''); // Clear input field
+        }
+    };
+
+  const [isOpen, setIsOpen] = useState(false);
+  function toggleChatRoom() {
+    setIsOpen((isOpen) => !isOpen);
+  }
 
   return (
     <div className="app-container">
-       <button onClick={clearLocalStorage}>Clear Local Storage</button>
       <div id="leaves">
         {/* Falling leaves animation */}
         <i></i>
@@ -251,7 +490,7 @@ const Study_page = () => {
                 className="task-done-check-box"
                 type="checkbox"
                 checked={label.completed}
-                onChange={(e) => handleLabelChange(index, 'completed', e.target.checked)}
+                onChange={(e) => handleLabelChange(index, 'checked', e.target.checked)}
               />
               Task {index + 1}
               <input
@@ -269,7 +508,7 @@ const Study_page = () => {
                 className="remind-later-check-box"
                 type="checkbox"
                 checked={label.reminded}
-                onChange={(e) => handleLabelChange(index, 'reminded', e.target.checked)}
+                onChange={(e) => handleLabelChange(index, 'remind_noti', e.target.checked)}
               />
               
             </div>
@@ -284,7 +523,7 @@ const Study_page = () => {
       <label className="focus-time-label">
         Focus time
         <input
-          className="countdown-input"
+          className="countdown-input-1"
           type="number"
           min="1"
           placeholder="Enter focus time"
@@ -295,7 +534,7 @@ const Study_page = () => {
       <label className="focus-time-label">
         Break time
         <input
-          className="countdown-input"
+          className="countdown-input-2"
           type="number"
           min="1"
           placeholder="Enter break time"
@@ -306,7 +545,7 @@ const Study_page = () => {
       <label className="focus-time-label">
         Sessions
         <input
-          className="countdown-input"
+          className="countdown-input-3"
           type="number"
           min="1"
           placeholder="Enter number of sessions"
@@ -315,10 +554,10 @@ const Study_page = () => {
         />
       </label>
       <label className="time-remain-label">
-        <h4>
+        <h5>
           Remaining time: {formatTime(timeRemaining)} - {isFocusSession ? 'Focus' : 'Break'} Session
-        </h4>
-        <h4>Current Session: {currentSession} of {sessions}</h4>
+        </h5>
+        <h5>Current Session: {currentSession} of {sessions}</h5>
       </label>
       <div className="clock-table-btns">
         <button className="start-clock-btn" onClick={handleStart}>Start</button>
@@ -344,6 +583,7 @@ const Study_page = () => {
                 {message.text}
               </div>
             ))}
+            <div ref={messagesEndRef} />
           </div>
           <form className="chatbot-input-form" onSubmit={handleSubmit}>
             <input
@@ -356,10 +596,39 @@ const Study_page = () => {
           </form>
         </div>)}
 
-
-        {/* Sign out btn */}
-        <button className='log-out-btn' onClick={logOut}>Log out</button>
+        
       </div>
+      {/* Sign out btn */}
+      <button className='log-out-btn' onClick={logOut}>Log out</button>
+
+      {/* Chatroom */}
+      {isOpen &&
+      (<div className="chat-room-container">
+        <h3>Chat Room</h3>
+        <div className="chat-room-form">
+            {chatmessages.map((chatmessage, index) => (
+              <div
+                  key = {index}
+                  className={`${chatmessage.user ? 'broadcast-msg' : 'my-msg'}`}
+                >
+                  {chatmessage.text}
+                </div>
+            ))}
+            <div ref={chatmessagesEndRef} />
+            </div>
+            <form className="chat-room-input" onSubmit={sendChatMessage}>
+              <input
+                    type="text"
+                    className="form-control"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    placeholder="Type a message..."
+                    autoComplete="off"
+              />
+              <button className="chat-room-btn" type="submit">Send</button>
+            </form>            
+       </div>)}
+        <button className='hide-chat-room-btn' onClick={toggleChatRoom}>Chatroom</button>
     </div>
   );
 };

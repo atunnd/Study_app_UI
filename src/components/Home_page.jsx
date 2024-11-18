@@ -13,6 +13,7 @@ const Home_page = () => {
   const handleClickAboutUs = (event) => {
     navigate("/login_page");
   }
+
   return (
     
     <div className="container">
