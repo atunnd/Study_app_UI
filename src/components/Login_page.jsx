@@ -2,10 +2,11 @@ import React, { useContext, createContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Login_page.css';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import useToken from '../hooks/useToken';
 
 const Login_page = () => {
+  document.title = 'Study With Me';
+
   const [usermail, setUsermail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -23,13 +24,20 @@ const Login_page = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    const axiosInstance = axios.create({
+      baseURL: 'http://127.0.0.1:8000', // Adjust the base URL as per your API setup
+    });
  
     if (usermail && password) {
         const emailString = String(usermail);
         const passwordString = String(password);
         const nameString = "user";
       try {
-        const response = await axios.post('https://study-app-be-4.onrender.com/log_in', {
+        // const response = await axios.post('https://study-app-be-4.onrender.com/log_in', 
+        const response = await axiosInstance.post('/auth/log_in', 
+          
+        {
           name: nameString,
           mail: emailString,
           password: passwordString

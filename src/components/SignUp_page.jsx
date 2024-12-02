@@ -4,6 +4,7 @@ import './SignUp_page.css';
 import axios from 'axios';
 
 const SignUp_page = () => {
+  document.title = 'Study With Me';
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,6 +27,10 @@ const SignUp_page = () => {
     setConfirmPassword(event.target.value);
   };
 
+  const axiosInstance = axios.create({
+    baseURL: 'http://127.0.0.1:8000', // Adjust the base URL as per your API setup
+  });
+
   const handleSubmit = async (event) => {
     event.preventDefault();
   
@@ -39,7 +44,8 @@ const SignUp_page = () => {
     const passwordString = String(password);
   
     try {
-      const response = await axios.post('https://study-app-be-4.onrender.com/create_user', {
+      const response = await axiosInstance.post('/auth/register', 
+      {
         name: usernameString,
         mail: emailString,
         password: passwordString

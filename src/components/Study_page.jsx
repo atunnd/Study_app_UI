@@ -7,8 +7,11 @@ import breakEndSound from '../audios/mixkit-cinematic-church-bell-hit-619.mp3';
 import focusEndSound from '../audios/mixkit-happy-bells-notification-937.mp3';
 import useToken from '../hooks/useToken';
 import axios from 'axios';
+import { marked } from 'marked';
 
 const Study_page = () => {
+  document.title = 'Study With Me';
+
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
   const [focusTime, setFocusTime] = useState(0); // in minutes
@@ -138,10 +141,9 @@ const Study_page = () => {
 
 // Set up an Axios instance with default headers
   const axiosInstance = axios.create({
-    baseURL: 'https://study-app-be-4.onrender.com', // Adjust the base URL as per your API setup
+    baseURL: 'http://127.0.0.1:8000', 
   });
 
-  // Add an interceptor to include the token in every request
   axiosInstance.interceptors.request.use(
     (config) => {
       const tokenString = localStorage.getItem('token'); // Retrieve token from localStorage
@@ -182,7 +184,6 @@ const Study_page = () => {
         }
       } catch (error) {
         console.error('Error fetching tasks:', error);
-        // alert('Failed to fetch tasks. Please try again.');
       }
     };
 
@@ -199,7 +200,7 @@ const Study_page = () => {
       try {
         const tokenString = localStorage.getItem('token'); // Retrieve token from localStorage
         const token = tokenString ? JSON.parse(tokenString) : null;
-        const response = await axiosInstance.post('/create_task', 
+        const response = await axiosInstance.post('/task', 
           { 
             index: newIndex.toString(),
             description: '', 
@@ -246,15 +247,12 @@ const Study_page = () => {
 
   const handleLabelChange = async (index, field, value) => {
     try {
-      // Create a copy of the labels array and update the label at the specified index
+
       const updatedLabels = labels.map((label, i) =>
         i === index ? { ...label, [field]: value } : label
       );
       
-      // Get the updated label with the corresponding label_id
       const updatedLabel = updatedLabels[index];
-      // console.log("Request data: ", updatedLabel);
-      
 
       const temp = {index: updatedLabel.index.toString(),
         description: updatedLabel.description.toString(), 
@@ -264,7 +262,7 @@ const Study_page = () => {
       
       
       // Make an API call to update the label
-      const response = await axiosInstance.put(`/update_task/${updatedLabel.id}`, 
+      const response = await axiosInstance.put(`/task/${updatedLabel.id}`, 
         {
           id: updatedLabel.id.toString(),
           index: updatedLabel.index.toString(),
@@ -280,28 +278,23 @@ const Study_page = () => {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
       });
-      // console.log(response);
+
       if (response.status === 200) {
         setLabels(updatedLabels);
         localStorage.setItem('labels', JSON.stringify(updatedLabels));
       } else {
         console.error('Failed to update label');
-        // alert('Failed to update label. Please try again.');
       }
     } catch (error) {
       console.error('Error updating label:', error);
-      // alert('Failed to update the label. Please try again.');
     }
   };
 
   const handleDeleteTask = async (index) => {
     try {
       const token = localStorage.getItem('token'); 
-      // console.log("token: ", token);
-      // console.log("taskid: ", labels[index])
       const taskId = labels[index].id; 
-      // console.log("Delete id: ", taskId);
-      const response = await axiosInstance.delete(`/delete_task_${taskId}`, taskId.toString(), {
+      const response = await axiosInstance.delete(`/task/${taskId}`, taskId.toString(), {
         headers: {
           'Accept': 'application/json',
           'Authorization': `Bearer ${token}`, 
@@ -322,7 +315,6 @@ const Study_page = () => {
       }
     } catch (error) {
       console.error('Error deleting label:', error);
-      // alert('Failed to delete the label. Please try again.');
     }
   };
 
@@ -332,45 +324,120 @@ const Study_page = () => {
   }, [isVisible1]);
 
    // Gemini API key
-   const gemini_key = import.meta.env.VITE_GEMINI_API_KEY
-   const genAI = new GoogleGenerativeAI(gemini_key);
-   console.log(genAI);
-   const chatWithGemini = async (userInput) => {
+  // const gemini_key = import.meta.env.VITE_GEMINI_API_KEY
+  
+
+  const fetchGeminiKey = async () => {
+    try {
+      const userId = localStorage.getItem('user_id');
+      const tokenString = localStorage.getItem('token'); 
+      const token = tokenString ? JSON.parse(tokenString) : null;
+      const response = await axiosInstance.get(`/user/${userId}/chatbot-api`, {
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${token}`, 
+        },
+      });
+      if(!response.data.data)
+      {
+         alert("Your Chatbot API has not been set up correctly!")
+      }
+      return response.data.data
+    } catch (error) {
+      console.error("Error fetching Gemini API key:", error);
+      return null;
+    }
+  };
+
+  const maxHistory = 5; // max number of past messages to include in context
+  const chatHistory = useRef([]); // useRef to store history outside of render cycle
+
+  const updateHistory = (userMessage, aiMessage) => {
+    // Update the history with the latest user and AI messages
+    chatHistory.current.push({ user: userMessage, bot: aiMessage });
+    
+    // Keep history length within maxHistory
+    if (chatHistory.current.length > maxHistory) {
+      chatHistory.current.shift(); // remove the oldest message
+    }
+  };
+   
+  const chatWithGemini = async (userInput) => {
      try {
+
+      const geminiKey = await fetchGeminiKey();
+      if (!geminiKey) {
+        throw new Error("Gemini API key is missing");
+      }
+
+      const genAI = new GoogleGenerativeAI(geminiKey);
        // Retrieve the Gemini model
-       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      let prompt = "The conversation so far:\n";
+      chatHistory.current.forEach((entry) => {
+        prompt += `User: ${entry.user}\nBot: ${entry.bot}\n`;
+      });
+      prompt += `User: ${userInput}\n`;
+      prompt += "Give only 1 answer for user question"
+      
+
+    // Generate content with the user input and history as the prompt
+      const response = await model.generateContent(prompt);
+
+
  
        // Generate content with the user input as the prompt
-       const response = await model.generateContent(userInput);
+      // const response = await model.generateContent(userInput);
  
        // Return the generated text
-       return response.response.text().trim();
-     } catch (error) {
-       console.error("Error communicating with the Gemini API:", error.message);
-       return '';
+      return response.response.text();
+      } catch (error) {
+        console.error("Error communicating with the Gemini API:", error.message);
+        return '';
      }
-   };
+  };
 
    const messagesEndRef = useRef(null);
    useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-
- 
    // Chatbot submit handler
-   const handleSubmit = async (e) => {
-     e.preventDefault();
-     if (!input.trim()) return;
-     const userMessage = { text: input, user: true };
-     setMessages((prevMessages) => [...prevMessages, userMessage]);
-     const aiMessage = { text: '...', user: false };
-     setMessages((prevMessages) => [...prevMessages, aiMessage]);
-     const response = await chatWithGemini(input);
-     const newAiMessage = { text: response, user: false };
-     setMessages((prevMessages) => [...prevMessages.slice(0, -1), newAiMessage]);
-     setInput('');
-   };
+  //  const handleSubmit = async (e) => {
+  //    e.preventDefault();
+  //    if (!input.trim()) return;
+  //    const userMessage = { text: input, user: true };
+  //    setMessages((prevMessages) => [...prevMessages, userMessage]);
+  //    const aiMessage = { text: '...', user: false };
+  //    setMessages((prevMessages) => [...prevMessages, aiMessage]);
+  //    const response = await chatWithGemini(input);
+  //    const newAiMessage = { text: response, user: false };
+  //    setMessages((prevMessages) => [...prevMessages.slice(0, -1), newAiMessage]);
+  //    setInput('');
+  //  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    
+    const userMessage = { text: input, user: true };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+  
+    const aiMessage = { text: '...', user: false };
+    setMessages((prevMessages) => [...prevMessages, aiMessage]);
+  
+    // Send user input with the conversation history
+    const response = await chatWithGemini(input);
+    const newAiMessage = { text: response, user: false };
+  
+    // Update messages and history
+    setMessages((prevMessages) => [...prevMessages.slice(0, -1), newAiMessage]);
+    updateHistory(input, response); // Update history with the latest exchange
+  
+    setInput(''); // Clear the input field
+  };
+  
 
    
   const { setToken } = useToken();
@@ -399,13 +466,61 @@ const Study_page = () => {
   useEffect(() => {
    chatmessagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
  }, [chatmessages]);
+
+
+ useEffect(() => {
+  const fetchChatHistory = async () => {
+      try {
+          const token = localStorage.getItem('token'); 
+          const response = await axiosInstance.get('/messages', 
+            {
+              headers: 
+              {
+                'Accept': 'application/json', 
+                'Authorization': `Bearer ${token}`,
+              },
+            }
+          );
+          if (response.data.status === 200) {
+            const messages = response.data.data;
+
+            // Retrieve user names for each client_id
+            const history = await Promise.all(
+                messages.map(async (msg) => {
+                    const token = localStorage.getItem('token'); 
+                    const response = await axiosInstance.get(`user/${msg.client_id}/name`, 
+                      {
+                        headers: 
+                        {
+                          'Accept': 'application/json', 
+                          'Authorization': `Bearer ${token}`,
+                        },
+                      }
+                    );
+                    const userName = response.data.data;
+
+                    return {
+                        text: `${userName}: ${msg.data}`,
+                        user: msg.client_id !== localStorage.getItem('user_id'), // Broadcast if not the same user
+                    };
+                })
+            );
+
+            setChatMessages(history);
+          }
+      } catch (error) {
+          console.error('Failed to fetch chat history:', error);
+      }
+  };
+
+  fetchChatHistory();
+}, []);
   
 
   useEffect(() => {
-      ws.current = new WebSocket(`wss://study-app-be-4.onrender.com/ws/${localStorage.getItem('user_id')}`); 
-  
+      // ws.current = new WebSocket(`wss://study-app-be-4.onrender.com/ws/${localStorage.getItem('user_id')}`); 
+      ws.current = new WebSocket(`ws://127.0.0.1:8000/ws/${localStorage.getItem('user_id')}`); 
       ws.current.onmessage = async (event) => {
-          // console.log('Received message:', event.data);
   
           let processedMessage = event.data; 
           let isBroadcast = false;
@@ -413,7 +528,16 @@ const Study_page = () => {
           if(isValidJSON(processedMessage))
           {   const message = JSON.parse(event.data); // Parse message as JSON
               const userId = message.id; // Extract user ID
-              const response = await axios.get(`https://study-app-be-4.onrender.com/get_user_name_${userId}`);
+              const token = localStorage.getItem('token'); 
+              const response = await axiosInstance.get(`user/${userId}/name`, 
+                {
+                  headers: 
+                  {
+                    'Accept': 'application/json', 
+                    'Authorization': `Bearer ${token}`,
+                  },
+                }
+              );
               const userName = response.data.data;
   
               // Format the message
@@ -439,7 +563,7 @@ const Study_page = () => {
         event.preventDefault();
         if (ws.current && inputValue.trim()) {
             ws.current.send(inputValue.trim());
-            setInputValue(''); // Clear input field
+            setInputValue(''); 
         }
     };
 
@@ -447,6 +571,11 @@ const Study_page = () => {
   function toggleChatRoom() {
     setIsOpen((isOpen) => !isOpen);
   }
+  
+  const navigate = useNavigate();
+  const handleSettingsClick = () => {
+    navigate('/Setting_page');
+  };
 
   return (
     <div className="app-container">
@@ -616,6 +745,7 @@ const Study_page = () => {
             </form>            
        </div>)}
         <button className='hide-chat-room-btn' onClick={toggleChatRoom}>Chatroom</button>
+        <button className='settings-btn' onClick={handleSettingsClick}>Settings</button>
     </div>
   );
 };

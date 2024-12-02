@@ -4,14 +4,11 @@ import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import Home_page from './components/Home_page';
 import SignUp_page from './components/SignUp_page';
 import Study_page from './components/Study_page';
+import Setting_page from './components/Setting_page';
 import useToken from './hooks/useToken';
 
 const App = () => {
   const { token, setToken } = useToken();
-
-  // useEffect(() => {
-  //   console.log("TBlah", token);
-  // }, [token]);
   
   return (
      <BrowserRouter>
@@ -23,7 +20,9 @@ const App = () => {
           <Route path="/SignUp_page" element={<SignUp_page />}/>
           <Route 
             path="/Study_page" 
-            Component={Study_page}/> 
+            element={<Study_page />}/> 
+          <Route path="/Setting_page"
+            element={<Setting_page />}/>
         </Routes>
      </BrowserRouter>
   )

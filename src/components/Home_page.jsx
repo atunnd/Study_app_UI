@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import './Home_page.css';
 
 const Home_page = () => {
+  document.title = 'Study With Me';
   const navigate = useNavigate();
   const handleClickLogin = (event) => {
       navigate("/login_page");
