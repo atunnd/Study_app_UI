@@ -130,7 +130,7 @@
 .log-out-btn {
     position: absolute;  
     top: 4vh;           
-    right: 10px;        
+    right: 80px;        
     width: 10vh;         
     padding: 10px;       
     font-size: 16px;    
@@ -142,10 +142,24 @@
     font-weight: bold;
     transform: translate(-50%, -50%); 
   }
-  
-.log-out-btn:hover {
+
+.settings-btn {
+    position: absolute;  
+    top: 4vh;           
+    right: -30px;        
+    width: 10vh;         
+    padding: 10px;       
+    font-size: 16px;    
     background-color: #8ACCA0; 
-  }
+    color: white;        
+    border: none;        
+    border-radius: 5px;  
+    cursor: pointer;     
+    font-weight: bold;
+    transform: translate(-50%, -50%); 
+}
+
+
 
 .chatbot-container {
     background-color: white;

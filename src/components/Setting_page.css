@@ -1,0 +1,79 @@
+.settings-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(138, 204, 169, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+  
+.user-information-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    background-color: rgba(138, 204, 191, 0.21);
+    padding: 0px 200px 0px 200px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 50vh;
+    height: 50vh;
+}
+
+.input-label {
+    width: 600px;
+    font-size: 25px;
+    margin: 15px;
+    text-align: left;
+    color: #8accac;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+
+}
+
+.user-name {
+    margin-left: 20px; /* Adjust spacing between the label and username */
+    margin-top: 0px;
+}
+  
+.user-mail {
+    margin-left: 20px;
+    margin-top: 0px;
+}
+  
+.input-field-password {
+    width: 300px;
+    height: 40px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 2px solid #8ACCA0;
+    border-radius: 10px;
+    margin-left: 58px;
+    outline: none;
+}
+  
+.input-field-chatbot {
+    width: 300px;
+    height: 40px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 2px solid #8ACCA0;
+    border-radius: 10px;
+    margin-left: 86px;
+    outline: none;
+}
+
+.delete-account-btn {
+    margin-top: 10px;
+    padding: 12px;
+    font-size: 1.2rem;
+    background-color: #8accac;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
