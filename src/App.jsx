@@ -18,11 +18,8 @@ const App = () => {
             path="/login_page" 
             element={token ? (<Navigate replace to="/Study_page" />) : (<Login_page setToken={setToken} />) } />
           <Route path="/SignUp_page" element={<SignUp_page />}/>
-          <Route 
-            path="/Study_page" 
-            element={<Study_page />}/> 
-          <Route path="/Setting_page"
-            element={<Setting_page />}/>
+          <Route path="/Study_page" element={<Study_page />}/> 
+          <Route path="/Setting_page"element={<Setting_page />}/>
         </Routes>
      </BrowserRouter>
   )
