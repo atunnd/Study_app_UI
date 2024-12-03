@@ -141,7 +141,7 @@ const Study_page = () => {
 
 // Set up an Axios instance with default headers
   const axiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:8000', 
+    baseURL: 'https://study-app-be-2.onrender.com', 
   });
 
   axiosInstance.interceptors.request.use(
@@ -515,11 +515,11 @@ const Study_page = () => {
 
   fetchChatHistory();
 }, []);
-  
+
 
   useEffect(() => {
       // ws.current = new WebSocket(`wss://study-app-be-4.onrender.com/ws/${localStorage.getItem('user_id')}`); 
-      ws.current = new WebSocket(`ws://127.0.0.1:8000/ws/${localStorage.getItem('user_id')}`); 
+      ws.current = new WebSocket(`wss://study-app-be-2.onrender.com/ws/${localStorage.getItem('user_id')}`); 
       ws.current.onmessage = async (event) => {
   
           let processedMessage = event.data; 

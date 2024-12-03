@@ -19,7 +19,7 @@ const Setting_page = () => {
   };
 
   const axiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:8000', 
+    baseURL: 'https://study-app-be-2.onrender.com', 
   });
   // Handle form submission
   const handleSubmit = async (e) => {
