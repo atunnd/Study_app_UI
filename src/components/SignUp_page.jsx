@@ -28,7 +28,7 @@ const SignUp_page = () => {
   };
 
   const axiosInstance = axios.create({
-    baseURL: 'http://127.0.0.1:8000', // Adjust the base URL as per your API setup
+    baseURL: 'https://study-app-be-2.onrender.com', // Adjust the base URL as per your API setup
   });
 
   const handleSubmit = async (event) => {
